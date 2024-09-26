@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f0f0f0;">
+
+  <div class="container" style="max-width: 400px; margin: 50px auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+    <h1>Hangman Game</h1>
+    <p>Guess the word:</p>
+    <div id="wordDisplay" style="margin-bottom: 20px;"></div>
+    <p>Letters guessed:</p>
+    <div id="guessedLetters" style="margin-bottom: 20px;"></div>
+    <p id="attempts" style="margin-bottom: 20px;"></p>
+    <input type="text" id="guessInput" style="padding: 10px; width: 60%; margin-bottom: 10px;" maxlength="1">
+    <button onclick="guessLetter()" style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Guess</button>
+    <p id="message" style="margin-top: 20px; font-weight: bold;"></p>
+  </div>
+
+  <script>
+    const words = ['hangman', 'javascript', 'computer', 'programming', 'html', 'css', 'python', 'openai', 'chatgpt'];
+    let chosenWord = words[Math.floor(Math.random() * words.length)];
+    let guessedWord = '_'.repeat(chosenWord.length);
+    let guessedLetters = '';
+    let attempts = 6;
+
+    function displayWord() {
+      document.getElementById('wordDisplay').textContent = guessedWord;
+    }
+
+    function displayGuessedLetters() {
+      document.getElementById('guessedLetters').textContent = guessedLetters;
+    }
+
+    function displayAttempts() {
+      document.getElementById('attempts').textContent = `Attempts left: ${attempts}`;
+    }
+
+    function guessLetter() {
+      const guess = document.getElementById('guessInput').value.toLowerCase();
+
+      if (guessedLetters.includes(guess) || guessedWord.includes(guess)) {
+        document.getElementById('message').textContent = `You already guessed "${guess}". Try another letter.`;
+        return;
+      }
+
+      guessedLetters += guess + ' ';
+      displayGuessedLetters();
+
+      if (chosenWord.includes(guess)) {
+        for (let i = 0; i < chosenWord.length; i++) {
+          if (chosenWord[i] === guess) {
+            guessedWord = guessedWord.substring(0, i) + guess + guessedWord.substring(i + 1);
+          }
+        }
+        displayWord();
+        if (guessedWord === chosenWord) {
+          document.getElementById('message').textContent = 'Congratulations! You guessed the word!';
+        }
+      } else {
+        attempts--;
+        displayAttempts();
+        if (attempts === 0) {
+          document.getElementById('message').textContent = `Game over! The word was "${chosenWord}".`;
+        } else {
+          document.getElementById('message').textContent = `Incorrect guess. "${guess}" is not in the word.`;
+        }
+      }
+
+      document.getElementById('guessInput').value = '';
+    }
+
+    displayWord();
+    displayAttempts();
+  </script>
+
+</body>
+</html>
